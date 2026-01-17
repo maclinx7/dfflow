@@ -1,6 +1,7 @@
 # dfflow
 ![PyPI](https://img.shields.io/pypi/v/dfflow)
 ![Python](https://img.shields.io/pypi/pyversions/dfflow)
+![pandas](https://img.shields.io/badge/pandas-supported-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 Lightweight pandas DataFrame logging and flow pipeline tracker.
