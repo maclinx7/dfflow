@@ -76,19 +76,19 @@ A DataFrame-aware logger supporting:
 
 | Parameter   | Description                       |
 | ----------- | --------------------------------- |
-| `log_file`  | Output log file path              |
-| `mode`      | Logging format (`text` or `json`) |
-| `min_level` | Minimum log level to record       |
+|`log_file`  | Output log file path              |
+|`mode`      | Logging format (`text` or `json`) |
+|`min_level` | Minimum log level to record       |
 
 
 ### Logging Methods
 
 | Method                                 | Description                                  |
 |----------------------------------------|----------------------------------------------|
-| `debug(message: str, df: DataFrame)`   | Logs detailed debugging information          |
-| `info(message: str, df: DataFrame)`    | Logs standard pipeline progress              |
-| `warning(message: str, df: DataFrame)` | Logs potential data issues (e.g., row drops) |
-| `error(message: str, df: DataFrame)`   | Logs critical failures or invalid states     |
+|`debug(message: str, df: DataFrame)`   | Logs detailed debugging information          |
+|`info(message: str, df: DataFrame)`    | Logs standard pipeline progress              |
+|`warning(message: str, df: DataFrame)` | Logs potential data issues (e.g., row drops) |
+|`error(message: str, df: DataFrame)`   | Logs critical failures or invalid states     |
 
 
 ### Usage
@@ -126,8 +126,8 @@ logger.info("Loaded DataFrame", df)
 
 | Method                                | Description                                                     |
 |---------------------------------------|-----------------------------------------------------------------|
-| `add_step(name: str, func: Callable)` | Add a transformation step to the pipeline                       |
-| `run(df: DataFrame) -> DataFrame`     | Executes all steps sequentially and returns the final DataFrame |
+|`add_step(name: str, func: Callable)` | Add a transformation step to the pipeline                       |
+|`run(df: DataFrame) -> DataFrame`     | Executes all steps sequentially and returns the final DataFrame |
 
 
 ### Usage
