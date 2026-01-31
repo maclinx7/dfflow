@@ -37,8 +37,14 @@ In real ML projects:
 ```bash
 pip install dfflow
 ```
----
+
 ## Requirements
+
+- Python >= 3.8
+- pandas >= 1.5
+
+## Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
