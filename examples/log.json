@@ -1,1 +1,0 @@
-{"timestamp": "2026-01-31 14:45:24", "level": "INFO", "message": "Weather DataFrame logged in JSON format", "shape": [2, 2], "columns": ["City", "Temperature"]}
