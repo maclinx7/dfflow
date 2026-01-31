@@ -1,8 +1,4 @@
 # dfflow
-![PyPI](https://img.shields.io/pypi/v/dfflow)
-![Python](https://img.shields.io/pypi/pyversions/dfflow)
-![pandas](https://img.shields.io/badge/pandas-supported-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
 
 [![PyPI version](https://badge.fury.io/py/dfflow.svg)](https://pypi.org/project/dfflow/)
 [![Python Versions](https://img.shields.io/pypi/pyversions/dfflow)](https://pypi.org/project/dfflow/)
