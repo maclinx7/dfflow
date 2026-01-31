@@ -38,6 +38,11 @@ In real ML projects:
 pip install dfflow
 ```
 ---
+## Requirements
+```bash
+pip install -r requirements.txt
+```
+---
 ## Core Components
 
 - **DFLogger** — DataFrame-aware logger
