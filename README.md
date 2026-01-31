@@ -4,162 +4,227 @@
 ![pandas](https://img.shields.io/badge/pandas-supported-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-Lightweight pandas DataFrame logging and flow pipeline tracker.
+[![PyPI version](https://badge.fury.io/py/dfflow.svg)](https://pypi.org/project/dfflow/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/dfflow)](https://pypi.org/project/dfflow/)
+[![Tests](https://github.com/maclin-oss/dfflow/actions/workflows/tests.yml/badge.svg)](https://github.com/maclin-oss/dfflow/actions/workflows/tests.yml)
+[![License](https://img.shields.io/pypi/l/dfflow)](https://pypi.org/project/dfflow/)
+
+
+**dfflow** is a **Lightweight Python utility tool** for logging, tracking, and debugging Pandas DataFrame workflows.
+
+It provides:
+- Structured DataFrame logging with log levels
+- Step-based pipeline execution
+- Lightweight DataFrame profiling
+- Clean, ML-friendly APIs
 
 ---
 
-## 📌 What is this?
+## Why dfflow?
 
-**dfflow** is a simple, easy-to-use Python package for:
-- Logging pandas DataFrame transformations step by step
-- Saving logs in text or JSON format
-- Building reusable pipeline-style data flows
+In real ML projects:
 
----
+- DataFrames change at every step
+- Debugging data issues is painful
+- Standard logging libraries do not understand DataFrames
 
-## 📌 Features
+**dfflow solves this gap** by providing:
 
-✅ Automatic DataFrame transformation logging  
-✅ Text and JSON log formats supported  
-✅ Easy pipeline-style processing  
-✅ Customizable logging  
+- Visibility into DataFrame transformations
+- Reproducible pipeline execution
+- Minimal overhead with maximum clarity
 
 ---
 
-## 📌 Installation
+## Installation
 
 ```bash
 pip install dfflow
 ```
+---
+## Core Components
+
+- **DFLogger** — DataFrame-aware logger
+
+- **FlowPipeline** — Step-based DataFrame pipeline
+
+- **Decorators** — Lightweight step tracking
+
+- **Cleaning utilities** — Common preprocessing helpers
+
+- **Profiling utilities** — Quick DataFrame inspection
 
 ---
+## DFLogger
+### Class: DFLogger
 
-## 📌 Requirements
+A DataFrame-aware logger supporting:
 
-- Python >=3.7
-- pandas >=1.3
+- Log levels (`DEBUG`, `INFO`, `WARNING`, `ERROR`)
+- Text or JSON logging
+- Log-level filtering using `min_level`
 
-To install requirements:
 
-```bash
-pip install -r requirements.txt
-```
+### Parameters
 
----
+| Parameter   | Description                       |
+| ----------- | --------------------------------- |
+| `log_file`  | Output log file path              |
+| `mode`      | Logging format (`text` or `json`) |
+| `min_level` | Minimum log level to record       |
 
-## 📌 Usage Example 1
+
+### Logging Methods
+
+| Method                                 | Description                                  |
+|----------------------------------------|----------------------------------------------|
+| `debug(message: str, df: DataFrame)`   | Logs detailed debugging information          |
+| `info(message: str, df: DataFrame)`    | Logs standard pipeline progress              |
+| `warning(message: str, df: DataFrame)` | Logs potential data issues (e.g., row drops) |
+| `error(message: str, df: DataFrame)`   | Logs critical failures or invalid states     |
+
+
+### Usage
 
 ```python
 import pandas as pd
-from dfflow import DFLogger, FlowPipeline, drop_nulls
-import os
-os.makedirs('examples', exist_ok=True)
+from dfflow import DFLogger
 
-logger = DFLogger()
-pipe = FlowPipeline(logger=logger)
+df = pd.DataFrame({"A": [1, 2], 
+                   "B": [3, 4]})
 
-pipe.add_step("Drop Nulls", drop_nulls)
-
-df = pd.DataFrame({
-    'name': ['Suresh', None, 'Jerry', 'Sunil', 'Linga'],
-    'age': [23, 26, None, 23, 24]
-})
-
-pipe.run(df)
-
-```
----
-## 📌 Usage Example 2
-
-```python
-import pandas as pd
-from dfflow import DFLogger, FlowPipeline
-from dfflow.cleaning import drop_nulls, lowercase_columns
-from dfflow.profile import profile_summary
-
-# Create a sample DataFrame
-data = {
-    "Name": ["Suresh", None, "Sunil", "Shiva", "Linga"],
-    "Age": [23, 26, 23, 24, None]
-}
-df = pd.DataFrame(data)
-
-print("Original DataFrame:")
-print(df)
-print("\n")
-
-# Setup the DFLogger
 logger = DFLogger(
-    log_file='dfflow_log2.txt',  # Log file path
-    mode='text'                          # 'text' or 'json'
+    log_file="app.log",
+    mode="text",
+    min_level="INFO"
 )
 
-# Create the FlowPipeline
-pipe = FlowPipeline(logger=logger)
+logger.info("Loaded DataFrame", df)
 
-# Add cleaning steps
-pipe.add_step("Drop Nulls", drop_nulls)
-pipe.add_step("Lowercase Columns", lowercase_columns)
+```
+---
+## FlowPipeline
+### Class: FlowPipeline
 
-# Run the pipeline
-result_df = pipe.run(df)
+`FlowPipeline` executes DataFrame transformations sequentially while optionally logging each step.
 
-print("Final Cleaned DataFrame:")
-print(result_df)
-print("\n")
+**Key Features**:
 
-# Profile Summary
-summary = profile_summary(result_df)
-print("Profile Summary:")
+- Explicit step tracking
+- Clean integration with `DFLogger`
+- Simple, readable pipeline structure
+
+
+### Methods
+
+| Method                                | Description                                                     |
+|---------------------------------------|-----------------------------------------------------------------|
+| `add_step(name: str, func: Callable)` | Add a transformation step to the pipeline                       |
+| `run(df: DataFrame) -> DataFrame`     | Executes all steps sequentially and returns the final DataFrame |
+
+
+### Usage
+
+```python
+import pandas as pd
+from dfflow import DFLogger, FlowPipeline, drop_nulls, lowercase_columns
+
+df = pd.DataFrame({"Name": ["Maclin", None],
+                   "Age": ["23", None]})
+
+logger = DFLogger()
+pipeline = FlowPipeline(logger)
+
+pipeline.add_step("Drop Nulls", drop_nulls)
+pipeline.add_step("Lowercase Columns", lowercase_columns)
+
+result = pipeline.run(df)
+print(result)
+```
+---
+## Decorators
+
+`log_step` is a decorator used to mark DataFrame transformation steps.
+
+### Purpose
+
+- Provides simple step-level tracking
+- Prints completion messages for better visibility
+- Used internally by cleaning utilities but can also be applied to custom functions
+
+### Usage
+
+```python
+import pandas as pd
+from dfflow import log_step
+
+df = pd.DataFrame({"A": [5, 10],
+                  "B": [15, 20]})
+
+@log_step("Normalize Columns")
+def normalize(df):
+    return df/df.max()
+
+normalized_df = normalize(df)
+print(normalized_df)
+```
+---
+
+## Cleaning Utilities
+
+- `drop_nulls(df)` -> Removes rows containing missing values.
+```python
+import pandas as pd
+from dfflow import drop_nulls
+
+df = drop_nulls(df)
+print(df)
+```
+- `lowercase_columns(df)` -> Converts all column names to lowercase.
+```python
+import pandas as pd
+from dfflow import lowercase_columns
+
+df = lowercase_columns(df)
+print(df)
+```
+---
+
+## Profiling Utilities
+
+Generates a quick summary of a DataFrame.
+
+**Includes**:
+
+- Shape
+- Column names
+- Null counts
+- Data types
+
+
+### Usage
+
+```python
+import pandas as pd
+from dfflow import profile_summary
+
+summary = profile_summary(df)
 print(summary)
-
 ```
 ---
 
-## 📌 Project Structure
+## Examples
 
-```
-dfflow/              # Main package folder
-│
-├── __init__.py
-├── logger.py        # Core logging class (DFLogger)
-├── decorators.py    # log_step decorator
-├── flow.py          # FlowPipeline logic
-├── cleaning.py      # Cleaning steps (drop_nulls, lowercase_columns)
-├── profile.py       # Profile utilities
-├── utils.py         # Helper functions
-│
-examples/            # Usage demos
-│   ├── dfflow_log.txt
-│   ├── dfflow_log2.txt
-│   ├── flow_demo.py
-│   └── flow_demo2.py
-│
-tests/               # Unit tests
-│   ├── __init__.py
-│   ├── test_cleaning.py
-│   ├── test_flow.py
-│   ├── test_logger.py
-│   └── test_profile.py
-│
-LICENSE              # MIT License
-README.md            # Project description
-requirements.txt     # Dependencies
-setup.py             # Packaging configuration
+Practical usage examples are available in the
+[`examples/`](./examples) directory, including:
 
-```
-
+- Basic INFO and DEBUG logging
+- Pipeline execution with logging levels
+- JSON logging
+- Lightweight DataFrame profiling
 
 ---
 
-## 📌 Author
+## License
 
-Maintained by **Suresh K**  
-📧 Email: sureshstr38@gmail.com  
-🌐 GitHub: [suressssz](https://github.com/suressssz)
-
----
-
-## 📌 License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License.

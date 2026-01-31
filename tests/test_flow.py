@@ -1,30 +1,21 @@
-# tests/test_flow.py
-
 import pandas as pd
-from dfflow import DFLogger, FlowPipeline, drop_nulls, lowercase_columns
+from dfflow.flow import FlowPipeline
+from dfflow.logger import DFLogger
 
-def test_flow_pipeline(tmp_path):
-    log_file = tmp_path / "flow_log.txt"
-    logger = DFLogger(log_file=str(log_file), mode='text')
 
-    df = pd.DataFrame({
-        'Name': ['Tom', None],
-        'Age': [25, 22]
-    })
+def test_pipeline_logging(tmp_path):
+    df = pd.DataFrame({"A": [1, None]})
 
-    pipe = FlowPipeline(logger=logger)
-    pipe.add_step("Drop Nulls", drop_nulls)
-    pipe.add_step("Lowercase Columns", lowercase_columns)
+    def drop_na(df):
+        return df.dropna()
 
-    result = pipe.run(df)
+    log_file = tmp_path / "pipeline.log"
+    logger = DFLogger(log_file=str(log_file))
 
-    # Check nulls dropped
-    assert result.isnull().sum().sum() == 0
-    # Check columns lowercased
-    for col in result.columns:
-        assert col.islower()
+    pipeline = FlowPipeline(logger)
+    pipeline.add_step("drop_na", drop_na)
 
-    # Check log created
-    with open(log_file) as f:
-        content = f.read()
-        assert "Drop Nulls" in content
+    result = pipeline.run(df)
+
+    assert result.shape == (1, 1)
+    assert "drop_na" in log_file.read_text()

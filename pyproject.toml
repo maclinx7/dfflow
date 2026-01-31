@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dfflow"
+version = "0.2.0"
+description = "Lightweight DataFrame logging and pipeline tracking for Pandas workflows"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+
+authors = [
+    { name = "Suresh K", email = "sureshstr38@gmail.com" }
+]
+
+keywords = [
+    "pandas",
+    "dataframe",
+    "logging",
+    "data-pipeline"
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+]
+
+dependencies = [
+    "pandas>=1.5"
+]
+
+[project.urls]
+Homepage = "https://github.com/maclin-oss/dfflow"
+Repository = "https://github.com/maclin-oss/dfflow"
+Issues = "https://github.com/maclin-oss/dfflow/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
