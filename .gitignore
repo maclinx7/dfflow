@@ -27,6 +27,7 @@ venv/
 Thumbs.db
 
 # 🔒 Logs
+logs/
+outputs/
 *.log
 *.env
-*.txt
